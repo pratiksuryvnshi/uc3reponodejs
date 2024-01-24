@@ -1,49 +1,37 @@
 pipeline {
-
-  environment {
-    dockerimagename = "mayankgg2511/uc3reponodejs"
-    dockerImage = ""
-  }
-
-  agent any
-
-  stages {
-
-    stage('Checkout Source') {
-      steps {
-        git 'https://github.com/mayankgg2511/uc3reponodejs.git'
-      }
+    agent any
+    environment{
+        dockerhub=credentials('docker')
     }
-
-    stage('Build image') {
-      steps{
-        script {
-          dockerImage = docker.build dockerimagename
+    
+    stages {
+        stage('Git Checkout....') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'Git', url: 'https://github.com/mayankgg2511/uc3reponodejs.git']]])
+            }
         }
-      }
-    }
-
-    stage('Pushing Image') {
-      environment {
-               registryCredential = 'dockerhub'
-           }
-      steps{
-        script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push("latest")
-          }
+        
+        stage('Build Docker Image....') {
+            steps {
+                sh 'docker build -t mayankgg2511/batch738devops:latest . '
+            }
         }
-      }
-    }
-
-    stage('Deploying nodejs container to Kubernetes') {
-      steps {
-        script {
-          kubernetesDeploy(configs: "deployment.yaml", "service.yaml")
+        
+        stage('Publish Artifacts To Dockerhub....') {
+            steps {
+                sh 'docker image ls'
+                sh 'docker logout'
+                sh 'echo $dockerhub_PSW | docker login -u $dockerhub_USR --password-stdin docker.io'
+                sh 'docker push mayankgg2511/batch738devops:latest'
+            }
         }
-      }
+        
+        stage('Deploying App to Kubernetes') {
+            steps {
+                script {
+                     kubernetesDeploy(configs: "nodejs-app-deploy.yml", kubeconfigId: "kubernetes")
+                        }
+                  }
+        }
     }
-
-  }
-
 }
