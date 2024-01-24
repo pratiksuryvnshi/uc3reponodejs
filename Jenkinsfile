@@ -1,7 +1,7 @@
 pipeline {
 
   environment {
-    dockerimagename = "pdockersavant/ethansdemo"
+    dockerimagename = "mayankgg2511/uc3reponodejs"
     dockerImage = ""
   }
 
@@ -11,7 +11,7 @@ pipeline {
 
     stage('Checkout Source') {
       steps {
-        git 'https://github.com/devopscloudworld/jenkins-nodejs-docker-k8s.git'
+        git 'https://github.com/mayankgg2511/uc3reponodejs.git'
       }
     }
 
