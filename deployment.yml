@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: node-app 
-        image: mayankgg2511/uc3reponodejs:latest 
+        image: mayankgg2511/batch738devops:latest 
         ports:
         - containerPort: 3000 
