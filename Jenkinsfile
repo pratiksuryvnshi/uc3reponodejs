@@ -1,7 +1,7 @@
 pipeline {
 
   environment {
-    dockerimagename = "mayankgg2511/batch738devops"
+    dockerimagename = "mayankgg2511/uc3devopsbatch800:v1"
     dockerImage = ""
   }
 
